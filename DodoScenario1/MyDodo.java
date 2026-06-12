@@ -225,4 +225,159 @@ public void walkAroundFencedArea() {
         }
     }
 }
+
+public boolean eggAhead() {
+    move();
+
+    if (onEgg()) {
+        stepOneCellBackwards();
+        return true;
+    }
+
+    stepOneCellBackwards();
+    return false;
+}
+
+public boolean nestAhead() {
+    move();
+
+    if (onNest()) {
+        stepOneCellBackwards();
+        return true;
+    }
+
+    stepOneCellBackwards();
+    return false;
+}
+
+public void eggTrailToNest() {
+    while (!onNest()) {
+
+        if (onEgg()) {
+            hatchEgg();
+        }
+
+        if (nestAhead()) {
+            move();
+        }
+        else if (eggAhead()) {
+            move();
+        }
+        else {
+            turnLeft();
+        }
+    }
+}
+
+public boolean leftIsFree() {
+    turnLeft();
+
+    if (canMove()) {
+        turnRight();
+        return true;
+    } else {
+        turnRight();
+        return false;
+    }
+}
+
+public void walkMazeToNest() {
+    while (!onNest()) {
+
+        if (leftIsFree()) {
+            turnLeft();
+            move();
+        } else if (canMove()) {
+            move();
+        } else {
+            turnRight();
+        }
+    }
+
+    if (canLayEgg()) {
+        layEgg();
+    }
+}
+
+public void faceEast() {
+    while (getDirection() != EAST) {
+        turnLeft();
+    }
+}
+
+public boolean validCoordinates(int x, int y) {
+    if (x < 0 || y < 0) {
+        showError("Invalid coordinates");
+        return false;
+    }
+
+    if (x >= getWorld().getWidth() || y >= getWorld().getHeight()) {
+        showError("Invalid coordinates");
+        return false;
+    }
+
+    return true;
+}
+
+public void goToLocation(int x, int y) {
+    if (!validCoordinates(x, y)) {
+        return;
+    }
+
+    while (getX() != x) {
+        if (getX() < x) {
+            setDirection(EAST);
+        } else {
+            setDirection(WEST);
+        }
+
+        move();
+    }
+
+    while (getY() != y) {
+        if (getY() < y) {
+            setDirection(SOUTH);
+        } else {
+            setDirection(NORTH);
+        }
+
+        move();
+    }
+}
+
+public int countEggsInRow() {
+    int eggs = 0;
+    int startX = getX();
+    int startY = getY();
+
+    faceEast();
+
+    while (!borderAhead()) {
+        if (onEgg()) {
+            eggs++;
+        }
+
+        move();
+    }
+
+    if (onEgg()) {
+        eggs++;
+    }
+
+    goToLocation(startX, startY);
+    setDirection(WEST);
+
+    return eggs;
+}
+
+public void layEggOnTrail(int aantal){
+while (aantal > 0){
+layEgg();
+aantal--;
+
+if(aantal >0){
+move();
+}
+}
+}
 }
