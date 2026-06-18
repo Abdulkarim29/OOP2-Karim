@@ -401,4 +401,30 @@ public int telAlleEirenInDeWereld() {
 
     return totaal;
 }
+
+public int findRowWithMostEggs() {
+    int meesteEieren = 0;
+    int rijMetMeesteEieren = 0;
+    int rij = 0;
+
+    while (rij < getWorld().getHeight()) {
+        goToLocation(0, rij);
+
+        int eierenInRij = countEggsInRow();
+
+        System.out.println("Rij " + rij + " heeft " + eierenInRij + " eieren");
+
+        if (eierenInRij > meesteEieren) {
+            meesteEieren = eierenInRij;
+            rijMetMeesteEieren = rij;
+        }
+
+        rij++;
+    }
+
+    System.out.println("De rij met de meeste eieren is rij " + rijMetMeesteEieren);
+    System.out.println("Aantal eieren in die rij: " + meesteEieren);
+
+    return rijMetMeesteEieren;
+}
 }
