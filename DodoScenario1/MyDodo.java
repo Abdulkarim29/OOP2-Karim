@@ -380,4 +380,25 @@ move();
 }
 }
 }
+
+public int telAlleEirenInDeWereld() {
+    int totaal = 0;
+    int rij = 0;
+
+    while (rij < getWorld().getHeight()) {
+        goToLocation(0, rij);
+
+        int eierenInRij = countEggsInRow();
+
+        totaal = totaal + eierenInRij;
+
+        System.out.println("Rij " + rij + " heeft " + eierenInRij + " eieren");
+
+        rij++;
+    }
+
+    System.out.println("Totaal aantal eieren: " + totaal);
+
+    return totaal;
+}
 }
