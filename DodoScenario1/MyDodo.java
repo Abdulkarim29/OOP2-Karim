@@ -446,5 +446,13 @@ public boolean isInWorld(int x, int y) {
 
     return true;
 }
+public void layEggAt(int x, int y) {
+    if (isInWorld(x, y)) {
+        goToLocation(x, y);
 
+        if (canLayEgg()) {
+            layEgg();
+        }
+    }
+}
 }
