@@ -455,4 +455,144 @@ public void layEggAt(int x, int y) {
         }
     }
 }
+public void monumentVanEieren() {
+    int beginX = getX();
+    int beginY = getY();
+
+    int rij = 0;
+
+    while (beginY + rij < getWorld().getHeight()) {
+        goToLocation(beginX, beginY + rij);
+
+        int aantal = rij + 1;
+        int teller = 0;
+
+        while (teller < aantal) {
+            if (canLayEgg()) {
+                layEgg();
+            }
+
+            teller++;
+
+            if (teller < aantal) {
+                if (!borderAhead()) {
+                    move();
+                } else {
+                    teller = aantal;
+                }
+            }
+        }
+
+        rij++;
+    }
+
+    goToLocation(beginX, beginY);
+}
+public void stevigMonument() {
+    int beginX = getX();
+    int beginY = getY();
+
+    int rij = 0;
+    int aantal = 1;
+
+    while (beginY + rij < getWorld().getHeight()) {
+        goToLocation(beginX, beginY + rij);
+
+        int teller = 0;
+
+        while (teller < aantal) {
+            if (canLayEgg()) {
+                layEgg();
+            }
+
+            teller++;
+
+            if (teller < aantal) {
+                if (!borderAhead()) {
+                    move();
+                } else {
+                    teller = aantal;
+                }
+            }
+        }
+
+        aantal = aantal * 2;
+        rij++;
+    }
+
+    goToLocation(beginX, beginY);
+}
+public void piramideVanEieren() {
+    int beginX = getX();
+    int beginY = getY();
+
+    int rij = 0;
+
+    while (beginY + rij < getWorld().getHeight()) {
+        int x = beginX - rij;
+        int laatsteX = beginX + rij;
+
+        while (x <= laatsteX) {
+            if (x >= 0 && x < getWorld().getWidth()) {
+                goToLocation(x, beginY + rij);
+
+                if (canLayEgg()) {
+                    layEgg();
+                }
+            }
+
+            x++;
+        }
+
+        rij++;
+    }
+
+    goToLocation(beginX, beginY);
+}
+public double gemiddeldAantalEierenPerRij() {
+    int totaal = 0;
+    int rij = 0;
+
+    while (rij < getWorld().getHeight()) {
+        goToLocation(0, rij);
+
+        int eierenInRij = countEggsInRow();
+
+        totaal = totaal + eierenInRij;
+
+        rij++;
+    }
+
+    double gemiddelde = (double) totaal / getWorld().getHeight();
+
+    System.out.println("Gemiddeld aantal eieren per rij is: " + gemiddelde);
+
+    return gemiddelde;
+}
+public int findRowWithMostEggs() {
+    int meesteEieren = 0;
+    int rijMetMeesteEieren = 0;
+    int rij = 0;
+
+    while (rij < getWorld().getHeight()) {
+        goToLocation(0, rij);
+
+        int eierenInRij = countEggsInRow();
+
+        System.out.println("Rij " + rij + " heeft " + eierenInRij + " eieren");
+
+        if (eierenInRij > meesteEieren) {
+            meesteEieren = eierenInRij;
+            rijMetMeesteEieren = rij;
+        }
+
+        rij++;
+    }
+
+    System.out.println("De rij met de meeste eieren is rij " + rijMetMeesteEieren);
+    System.out.println("Aantal eieren in die rij is: " + meesteEieren);
+
+    return rijMetMeesteEieren;
+}
+
 }
