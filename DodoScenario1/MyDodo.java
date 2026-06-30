@@ -427,4 +427,24 @@ public int findRowWithMostEggs() {
 
     return rijMetMeesteEieren;
 }
+public boolean isInWorld(int x, int y) {
+    if (x < 0) {
+        return false;
+    }
+
+    if (y < 0) {
+        return false;
+    }
+
+    if (x >= getWorld().getWidth()) {
+        return false;
+    }
+
+    if (y >= getWorld().getHeight()) {
+        return false;
+    }
+
+    return true;
+}
+
 }
