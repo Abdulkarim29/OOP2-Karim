@@ -569,30 +569,158 @@ public double gemiddeldAantalEierenPerRij() {
 
     return gemiddelde;
 }
-public int findRowWithMostEggs() {
-    int meesteEieren = 0;
-    int rijMetMeesteEieren = 0;
-    int rij = 0;
+public int score = 0;
+public int stappen = 0;
 
-    while (rij < getWorld().getHeight()) {
-        goToLocation(0, rij);
+public void startDodoRace() {
+    score = 0;
+    stappen = 0;
 
-        int eierenInRij = countEggsInRow();
+    updateScorebord();
+    pakEiAlsKan();
 
-        System.out.println("Rij " + rij + " heeft " + eierenInRij + " eieren");
+    while (stappen < Mauritius.MAXSTEPS && erZijnNogEieren()) {
+        Actor ei = zoekBesteEi();
 
-        if (eierenInRij > meesteEieren) {
-            meesteEieren = eierenInRij;
-            rijMetMeesteEieren = rij;
+        if (ei == null) {
+            System.out.println("Geen ei gevonden");
+            return;
         }
 
-        rij++;
+        loopNaarEi(ei.getX(), ei.getY());
+        pakEiAlsKan();
     }
 
-    System.out.println("De rij met de meeste eieren is rij " + rijMetMeesteEieren);
-    System.out.println("Aantal eieren in die rij is: " + meesteEieren);
+    System.out.println("Einde race");
+    System.out.println("Score: " + score);
+}
 
-    return rijMetMeesteEieren;
+public boolean erZijnNogEieren() {
+    if (getWorld().getObjects(GoldenEgg.class).size() > 0) {
+        return true;
+    }
+
+    if (getWorld().getObjects(BlueEgg.class).size() > 0) {
+        return true;
+    }
+
+    return false;
+}
+
+public Actor zoekBesteEi() {
+    Actor besteEi = null;
+    int besteAfstand = 999;
+
+    java.util.List<GoldenEgg> goudenEieren = getWorld().getObjects(GoldenEgg.class);
+
+    int i = 0;
+    while (i < goudenEieren.size()) {
+        Actor ei = goudenEieren.get(i);
+
+        int afstand = afstandNaar(ei.getX(), ei.getY());
+
+        if (afstand < besteAfstand) {
+            besteAfstand = afstand;
+            besteEi = ei;
+        }
+
+        i++;
+    }
+
+    if (besteEi != null) {
+        return besteEi;
+    }
+
+    java.util.List<BlueEgg> blauweEieren = getWorld().getObjects(BlueEgg.class);
+
+    i = 0;
+    while (i < blauweEieren.size()) {
+        Actor ei = blauweEieren.get(i);
+
+        int afstand = afstandNaar(ei.getX(), ei.getY());
+
+        if (afstand < besteAfstand) {
+            besteAfstand = afstand;
+            besteEi = ei;
+        }
+
+        i++;
+    }
+
+    return besteEi;
+}
+
+public int afstandNaar(int x, int y) {
+    int verschilX = getX() - x;
+    int verschilY = getY() - y;
+
+    if (verschilX < 0) {
+        verschilX = verschilX * -1;
+    }
+
+    if (verschilY < 0) {
+        verschilY = verschilY * -1;
+    }
+
+    return verschilX + verschilY;
+}
+
+public void loopNaarEi(int x, int y) {
+    while (getX() != x && stappen < Mauritius.MAXSTEPS) {
+        if (getX() < x) {
+            setDirection(EAST);
+        } else {
+            setDirection(WEST);
+        }
+
+        doeStap();
+        pakEiAlsKan();
+    }
+
+    while (getY() != y && stappen < Mauritius.MAXSTEPS) {
+        if (getY() < y) {
+            setDirection(SOUTH);
+        } else {
+            setDirection(NORTH);
+        }
+
+        doeStap();
+        pakEiAlsKan();
+    }
+}
+
+public void doeStap() {
+    if (canMove() && stappen < Mauritius.MAXSTEPS) {
+        move();
+        stappen++;
+        updateScorebord();
+    } else {
+        stappen = Mauritius.MAXSTEPS;
+    }
+}
+
+public void pakEiAlsKan() {
+    if (getOneObjectAtOffset(0, 0, GoldenEgg.class) != null) {
+        pickUpEgg();
+        score = score + 5;
+        updateScorebord();
+    } else if (getOneObjectAtOffset(0, 0, BlueEgg.class) != null) {
+        pickUpEgg();
+        score = score + 1;
+        updateScorebord();
+    }
+}
+
+public void updateScorebord() {
+    Mauritius wereld = (Mauritius) getWorld();
+
+    int over = Mauritius.MAXSTEPS - stappen;
+
+    wereld.updateScore(over, score);
+}
+
+public int getScore() {
+    return score;
 }
 
 }
